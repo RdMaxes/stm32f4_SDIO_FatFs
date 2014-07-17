@@ -1,0 +1,9 @@
+*.gitignore~
+*.c~
+*.h~
+*.bin
+*.elf
+*.md~
+Makefile~
+*.cfg~
+*.gdb~
