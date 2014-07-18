@@ -8,7 +8,7 @@
 /*-----------------------------------------------------------------------*/
 
 #include "diskio.h"		/* FatFs lower layer API */
-#include "sdio_sdcard.h"		/* Example: MMC/SDC contorl */
+#include "sdio_sdcard.h"
 
 
 /*-----------------------------------------------------------------------*/
