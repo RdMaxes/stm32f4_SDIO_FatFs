@@ -337,13 +337,20 @@ void DMA2_Stream4_IRQHandler(void)
 SD_Error SD_Init(void)
 {
   __IO SD_Error errorstatus = SD_OK;
+  NVIC_InitTypeDef NVIC_InitStruct;
 
   /* SDIO Peripheral Low Level Init */
   SD_LowLevel_Init();
 
-  //SDIO_DeInit();
-
-  errorstatus = SD_PowerON();
+  SD_DeInit();
+  //Configure SDIO Global Interrupt
+	NVIC_InitStruct.NVIC_IRQChannel = SDIO_IRQn;
+	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 2;
+	NVIC_Init(&NVIC_InitStruct);
+    
+    errorstatus = SD_PowerON();
 
   if (errorstatus != SD_OK)
   {
