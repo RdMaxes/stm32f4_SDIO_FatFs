@@ -31,21 +31,21 @@ DSTATUS disk_initialize (
 
 	switch (pdrv) {
 	case ATA :
-		result = ATA_disk_initialize();
+		//result = ATA_disk_initialize();
 
 		// translate the reslut code here
 
 		return stat;
 
 	case MMC :
-		result = MMC_disk_initialize();
+		//result = MMC_disk_initialize();
 
 		// translate the reslut code here
 
 		return stat;
 
 	case USB :
-		result = USB_disk_initialize();
+		//result = USB_disk_initialize();
 
 		// translate the reslut code here
 
@@ -69,21 +69,21 @@ DSTATUS disk_status (
 
 	switch (pdrv) {
 	case ATA :
-		result = ATA_disk_status();
+		//result = ATA_disk_status();
 
 		// translate the reslut code here
 
 		return stat;
 
 	case MMC :
-		result = MMC_disk_status();
+		//result = MMC_disk_status();
 
 		// translate the reslut code here
 
 		return stat;
 
 	case USB :
-		result = USB_disk_status();
+		//result = USB_disk_status();
 
 		// translate the reslut code here
 
@@ -112,7 +112,7 @@ DRESULT disk_read (
 	case ATA :
 		// translate the arguments here
 
-		result = ATA_disk_read(buff, sector, count);
+		//result = ATA_disk_read(buff, sector, count);
 
 		// translate the reslut code here
 
@@ -121,7 +121,7 @@ DRESULT disk_read (
 	case MMC :
 		// translate the arguments here
 
-		result = MMC_disk_read(buff, sector, count);
+		//result = MMC_disk_read(buff, sector, count);
 
 		// translate the reslut code here
 
@@ -130,7 +130,7 @@ DRESULT disk_read (
 	case USB :
 		// translate the arguments here
 
-		result = USB_disk_read(buff, sector, count);
+		//result = USB_disk_read(buff, sector, count);
 
 		// translate the reslut code here
 
@@ -160,7 +160,7 @@ DRESULT disk_write (
 	case ATA :
 		// translate the arguments here
 
-		result = ATA_disk_write(buff, sector, count);
+		//result = ATA_disk_write(buff, sector, count);
 
 		// translate the reslut code here
 
@@ -169,7 +169,7 @@ DRESULT disk_write (
 	case MMC :
 		// translate the arguments here
 
-		result = MMC_disk_write(buff, sector, count);
+		//result = MMC_disk_write(buff, sector, count);
 
 		// translate the reslut code here
 
@@ -178,7 +178,7 @@ DRESULT disk_write (
 	case USB :
 		// translate the arguments here
 
-		result = USB_disk_write(buff, sector, count);
+		//result = USB_disk_write(buff, sector, count);
 
 		// translate the reslut code here
 
@@ -207,7 +207,7 @@ DRESULT disk_ioctl (
 	case ATA :
 		// pre-process here
 
-		result = ATA_disk_ioctl(cmd, buff);
+		//result = ATA_disk_ioctl(cmd, buff);
 
 		// post-process here
 
@@ -216,7 +216,7 @@ DRESULT disk_ioctl (
 	case MMC :
 		// pre-process here
 
-		result = MMC_disk_ioctl(cmd, buff);
+		//result = MMC_disk_ioctl(cmd, buff);
 
 		// post-process here
 
@@ -225,7 +225,7 @@ DRESULT disk_ioctl (
 	case USB :
 		// pre-process here
 
-		result = USB_disk_ioctl(cmd, buff);
+		//result = USB_disk_ioctl(cmd, buff);
 
 		// post-process here
 
