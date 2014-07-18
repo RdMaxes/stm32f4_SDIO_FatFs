@@ -39,20 +39,24 @@ CFLAGS_INCLUDE=-I./ \
 PERIPHERAL=../../Peripherals
 HARDWARE=../../Hardware
 USER_LIB=../../User_Lib
+FATFS=../../FatFs
 
 #User Source Files
 SRC+=	./main.c \
 	$(HARDWARE)/LED/led.c \
 	$(PERIPHERAL)/usart2/usart2.c \
 	$(USER_LIB)/myprintf/myprintf.c \
-	$(HARDWARE)/SDIO/sdio_sdcard.c
+	$(HARDWARE)/SDIO/sdio_sdcard.c \
+	$(FATFS)/src/diskio.c \
+	$(FATFS)/src/ff.c
 
 #User Header Files
 CFLAGS_INCLUDE+=-I./ \
 		-I$(HARDWARE)/LED \
 		-I$(PERIPHERAL)/usart2 \
 		-I$(USER_LIB)/myprintf \
-		-I$(HARDWARE)/SDIO 
+		-I$(HARDWARE)/SDIO \ 
+		-I(FATFS)/src
 #============================================================================# 
 CFLAGS_DEFINE= \
         -D USE_STDPERIPH_DRIVER \
