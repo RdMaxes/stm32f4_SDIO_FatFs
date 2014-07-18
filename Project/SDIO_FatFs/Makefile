@@ -56,11 +56,11 @@ CFLAGS_INCLUDE+=-I./ \
 		-I$(PERIPHERAL)/usart2 \
 		-I$(USER_LIB)/myprintf \
 		-I$(HARDWARE)/SDIO \ 
-		-I(FATFS)/src
+		-I$(FATFS)/src
 #============================================================================# 
 CFLAGS_DEFINE= \
         -D USE_STDPERIPH_DRIVER \
-	-D STM32F40_41xxx \
+		-D STM32F40_41xxx \
         -D __FPU_PRESENT=1 \
         -D ARM_MATH_CM4 \
         -D __FPU_USED=1 \
