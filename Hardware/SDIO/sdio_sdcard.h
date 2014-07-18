@@ -327,7 +327,6 @@ typedef struct
  #define SD_SDIO_DMA_FLAG_HTIF         	DMA_FLAG_HTIF3
  #define SD_SDIO_DMA_FLAG_TCIF         	DMA_FLAG_TCIF3
  #define SD_SDIO_DMA_IRQn              	DMA2_Stream3_IRQn
- #define SD_SDIO_DMA_IRQHANDLER        	DMA2_Stream3_IRQHandler
 #elif defined SD_SDIO_DMA_STREAM6
  #define SD_SDIO_DMA_STREAM            	DMA2_Stream6
  #define SD_SDIO_DMA_CHANNEL           	DMA_Channel_4
@@ -381,6 +380,7 @@ void SD_LowLevel_Init(void);
 void SD_LowLevel_DMA_TxConfig(uint32_t *BufferSRC, uint32_t BufferSize);
 void SD_LowLevel_DMA_RxConfig(uint32_t *BufferDST, uint32_t BufferSize);
 void SDIO_IRQHandler(void);
+void DMA2_Stream4_IRQHandler(void);
 
 #ifdef __cplusplus
 }
