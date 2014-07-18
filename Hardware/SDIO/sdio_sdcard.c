@@ -10,32 +10,40 @@
 
 #include "sdio_sdcard.h"	  													   
 									  
-static u8 CardType=SDIO_STD_CAPACITY_SD_CARD_V1_1;		
-static u32 CSD_Tab[4],CID_Tab[4],RCA=0;					
-static u8 DeviceMode=SD_DMA_MODE;		   				
-static u8 StopCondition=0; 								
-volatile SD_Error TransferError=SD_OK;						    
-volatile u8 TransferEnd=0;								
-SD_CardInfo SDCardInfo;								
+static u8 CardType=SDIO_STD_CAPACITY_SD_CARD_V1_1;	//Type of SD card	
+static u32 CSD_Tab[4],CID_Tab[4],RCA=0;				//CSD, CIS and RCA data	
+static u8 DeviceMode=SD_DMA_MODE;		   			//Working Mode 	
+static u8 StopCondition=0; 							//if sending stop bit flag, for DMA W/R	
+volatile SD_Error TransferError=SD_OK;				//transmission error flag, for DMA W/R		    
+volatile u8 TransferEnd=0;							//transmission ending flag, for DMA W/R		
+SD_CardInfo SDCardInfo;								//SD card information
 
+//Global Variables
+//SD R/W Disk needs 4byte alignment
 __align(4) u8 SDIO_DATA_BUFFER[512];						  
  
 
+//Initialize SD card
+//Calling major function SD_PowerON() and SD_InitializeCards() ..etc
+//return: fatal code
 SD_Error SD_Init(void)
 {
 	SD_Error errorstatus=SD_OK;	   
+	NVIC_InitTypeDef NVIC_InitStruct;
 
-	RCC->APB2ENR|=1<<4;    	   	 
-	RCC->APB2ENR|=1<<5;    	
-  	RCC->AHBENR|=1<<10;    		   	 
- 	RCC->AHBENR|=1<<1;    	
+	//SDIO pin configuration
+	RCC->APB2ENR|=1<<4;  //enable PORTC clock  	   	 
+	RCC->APB2ENR|=1<<5;  //enable PORTD clock  	
+  	RCC->AHBENR|=1<<10;  //enable SDIO clock  		   	 
+ 	RCC->AHBENR|=1<<1;   //enable DMA2 clock 	
 
 	GPIOC->CRH&=0XFFF00000; 
-	GPIOC->CRH|=0X000BBBBB;
+	GPIOC->CRH|=0X000BBBBB;	//PC.08~PC.12 Alternate-Push-Pull
 
 	GPIOD->CRL&=0XFFFFF0FF; 
-	GPIOD->CRL|=0X00000B00;
- 			   
+	GPIOD->CRL|=0X00000B00;	//PD.02 Alternate-Push-Pull, PD.07 Pull-Up Input
+ 	
+ 	//Deinit SDIO peripheral		   
 	SDIO->POWER=0x00000000;
 	SDIO->CLKCR=0x00000000;
 	SDIO->ARG=0x00000000;
@@ -45,16 +53,22 @@ SD_Error SD_Init(void)
 	SDIO->DCTRL=0x00000000;
 	SDIO->ICR=0x00C007FF;
 	SDIO->MASK=0x00000000;	  
- 	MY_NVIC_Init(0,0,SDIO_IRQChannel,2);
+	//SDIO NVIC Configuration
+	NVIC_InitStruct.NVIC_IRQChannel = SDIO_IRQn;
+	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 2;
+	NVIC_Init(&NVIC_InitStruct);
+	//Power ON Step
    	errorstatus=SD_PowerON();			
- 	if(errorstatus==SD_OK)errorstatus=SD_InitializeCards();					  
-  	if(errorstatus==SD_OK)errorstatus=SD_GetCardInfo(&SDCardInfo);	
- 	if(errorstatus==SD_OK)errorstatus=SD_SelectDeselect((u32)(SDCardInfo.RCA<<16)); 
-   	if(errorstatus==SD_OK)errorstatus=SD_EnableWideBusOperation(1);	
+ 	if(errorstatus==SD_OK)errorstatus=SD_InitializeCards();	//SD card initialization				  
+  	if(errorstatus==SD_OK)errorstatus=SD_GetCardInfo(&SDCardInfo);	//get SD card information	
+ 	if(errorstatus==SD_OK)errorstatus=SD_SelectDeselect((u32)(SDCardInfo.RCA<<16)); //Select SD card
+   	if(errorstatus==SD_OK)errorstatus=SD_EnableWideBusOperation(1);	//switch to 4bit data width
   	if((errorstatus==SD_OK)||(SDIO_MULTIMEDIA_CARD==CardType))
 	{  		    
-		SDIO_Clock_Set(SDIO_TRANSFER_CLK_DIV);			
-		errorstatus=SD_SetDeviceMode(SD_DMA_MODE);		
+		SDIO_Clock_Set(SDIO_TRANSFER_CLK_DIV);	//Set clock frequency		
+		errorstatus=SD_SetDeviceMode(SD_DMA_MODE); //Set as DMA mode
  	}
 	return errorstatus;		 
 }
