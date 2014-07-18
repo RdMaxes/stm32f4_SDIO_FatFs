@@ -395,7 +395,11 @@ SD_Error SD_Init(void)
   {
     errorstatus = SD_EnableWideBusOperation(SDIO_BusWide_4b);
   }
-
+  if((errorstatus==SD_OK)||(SDIO_MULTIMEDIA_CARD==CardType))
+  {  		    
+	errorstatus=SD_SetDeviceMode(SD_DMA_MODE);	
+	//errorstatus=SD_SetDeviceMode(SD_POLLING_MODE);
+  }
   return(errorstatus);
 }
 
@@ -2611,6 +2615,29 @@ static SD_Error SDEnWideBus(FunctionalState NewState)
       return(errorstatus);
     }
   }
+}
+
+
+//Set Device Mode
+//Mode: 
+//	SD_DMA_MODE: Data transfer using DMA.
+//	SD_INTERRUPT_MODE: Data transfer using interrupts.
+// 	SD_POLLING_MODE: Data transfer using flags.
+//return: fatal code
+SD_Error SD_SetDeviceMode(u32 Mode)
+{
+  SD_Error errorstatus = SD_OK;
+
+  if ((Mode == SD_DMA_MODE) || (Mode == SD_INTERRUPT_MODE) || (Mode == SD_POLLING_MODE))
+  {
+    DeviceMode = Mode;
+  }
+  else
+  {
+    errorstatus = SD_INVALID_PARAMETER;
+  }
+  return(errorstatus);
+
 }
 
 /**
