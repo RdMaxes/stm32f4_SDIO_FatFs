@@ -20,7 +20,7 @@ SD_CardInfo SDCardInfo;								//SD card information
 
 //Global Variables
 //SD R/W Disk needs 4byte alignment
-__align(4) u8 SDIO_DATA_BUFFER[512];						  
+u8 SDIO_DATA_BUFFER[512];						  
  
 
 //Initialize SD card
@@ -34,7 +34,8 @@ SD_Error SD_Init(void)
 	//SDIO pin configuration
 	RCC->APB2ENR|=1<<4;  //enable PORTC clock  	   	 
 	RCC->APB2ENR|=1<<5;  //enable PORTD clock  	
-  	RCC->AHBENR|=1<<10;  //enable SDIO clock  		   	 
+  	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SDIO,ENABLE);	 //enable SDIO clock
+  //	RCC->AHBENR|=1<<10;  //enable SDIO clock  		   	 
  	RCC->AHBENR|=1<<1;   //enable DMA2 clock 	
 
 	GPIOC->CRH&=0XFFF00000; 
