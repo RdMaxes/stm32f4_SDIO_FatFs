@@ -8,9 +8,9 @@
 /*-----------------------------------------------------------------------*/
 
 #include "diskio.h"		/* FatFs lower layer API */
-#include "usbdisk.h"	/* Example: USB drive control */
-#include "atadrive.h"	/* Example: ATA drive control */
-#include "sdcard.h"		/* Example: MMC/SDC contorl */
+//#include "usbdisk.h"	/* Example: USB drive control */
+//#include "atadrive.h"	/* Example: ATA drive control */
+#include "sdio_sdcard.h"		/* Example: MMC/SDC contorl */
 
 /* Definitions of physical drive number for each media */
 #define ATA		0
