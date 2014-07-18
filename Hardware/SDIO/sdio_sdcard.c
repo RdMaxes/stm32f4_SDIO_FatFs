@@ -350,6 +350,7 @@ SD_Error SD_Init(void)
 	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 2;
 	NVIC_Init(&NVIC_InitStruct);
 #ifdef SD_DMA_MODE
+  //Configure SDIO_DMA Global Interrupt
     NVIC_InitStruct.NVIC_IRQChannel = SD_SDIO_DMA_IRQn;
     NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 1;
     NVIC_Init(&NVIC_InitStruct);
