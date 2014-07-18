@@ -139,7 +139,7 @@
   *             NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
   *             NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   *             NVIC_Init(&NVIC_InitStructure);
-  *             // DMA2 STREAMx Interrupt ENABLE
+  *             // DMA2 ST
   *             NVIC_InitStructure.NVIC_IRQChannel = SD_SDIO_DMA_IRQn;
   *             NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
   *             NVIC_Init(&NVIC_InitStructure);
@@ -349,7 +349,11 @@ SD_Error SD_Init(void)
 	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
 	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 2;
 	NVIC_Init(&NVIC_InitStruct);
-    
+#ifdef SD_DMA_MODE
+    NVIC_InitStruct.NVIC_IRQChannel = SD_SDIO_DMA_IRQn;
+    NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 1;
+    NVIC_Init(&NVIC_InitStruct);
+#endif   
     errorstatus = SD_PowerON();
 
   if (errorstatus != SD_OK)
