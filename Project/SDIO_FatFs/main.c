@@ -1,10 +1,3 @@
-/*
-//@brief :
-//@Author:RdMaxes
-//@Data  :
-//@Note  :
-*/
-
 //Includes 
 #include <stm32f4xx.h>
 #include "led.h"

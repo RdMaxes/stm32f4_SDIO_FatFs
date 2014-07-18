@@ -1,3 +1,13 @@
+/*
+//@brief :STM32F40x_41x SD Card R/W via SDIO interface
+//@Author:RdMaxes
+//@Data  :2014/07/18
+//@Note  :
+//		 (*)2014/07/18
+//          Original sdio_sdcard.c and sdio_sdcard.h modified from ALIENTEK example.
+//          www.openedv.com ALIENTEK online support
+*/
+
 #include "sdio_sdcard.h"	  													   
 									  
 static u8 CardType=SDIO_STD_CAPACITY_SD_CARD_V1_1;		
