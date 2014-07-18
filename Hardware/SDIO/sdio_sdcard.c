@@ -2774,7 +2774,7 @@ static SD_Error FindSCR(uint16_t rca, uint32_t *pscr)
   }
 
   /*!< Send CMD55 APP_CMD with argument as card's RCA */
-  SDIO_CmdInitStructure.SDIO_Argument = (uint32_t) RCA << 16;
+  SDIO_CmdInitStructure.SDIO_Argument = (uint32_t) rca << 16;
   SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_APP_CMD;
   SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
   SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
