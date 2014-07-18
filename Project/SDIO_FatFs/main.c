@@ -3,6 +3,7 @@
 #include "led.h"
 #include "usart2.h"
 #include "myprintf.h"
+#include "sdio_sdcard.h"
 
 //Delay for a while
 //time: delay time

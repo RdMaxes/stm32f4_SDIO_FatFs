@@ -121,6 +121,7 @@ typedef struct
   u16 RCA;					
   u8 CardType;				
 } SD_CardInfo;
+
 extern SD_CardInfo SDCardInfo;
 
 
