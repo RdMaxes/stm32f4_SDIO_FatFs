@@ -4,6 +4,8 @@
 #include "usart2.h"
 #include "myprintf.h"
 #include "sdio_sdcard.h"
+#include "diskio.h"
+#include "ff.h"
 
 //Delay for a while
 //time: delay time
