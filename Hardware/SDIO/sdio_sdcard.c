@@ -315,6 +315,19 @@ void SD_DeInit(void)
   SD_LowLevel_DeInit();
 }
 
+
+//SDIO IRQHandler
+void SDIO_IRQHandler(void)
+{
+	SD_ProcessIRQ();
+}
+
+//SDIO_DMA IRQHandler
+void SD_SDIO_DMA_IRQHANDLER(void)
+{
+  	SD_ProcessDMAIRQ();
+}
+
 /**
   * @brief  Initializes the SD Card and put it into StandBy State (Ready for data
   *         transfer).
