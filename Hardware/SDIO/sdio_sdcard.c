@@ -557,6 +557,7 @@ SD_Error SD_PowerON(void)
       {
         return(errorstatus);
       }
+      //ACMD41
       SDIO_CmdInitStructure.SDIO_Argument = SD_VOLTAGE_WINDOW_SD | SDType;
       SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_SD_APP_OP_COND;
       SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
