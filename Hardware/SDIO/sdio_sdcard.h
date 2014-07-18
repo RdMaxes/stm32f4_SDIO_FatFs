@@ -43,7 +43,7 @@ typedef enum
 	SD_SDIO_FUNCTION_BUSY              = (31),
 	SD_SDIO_FUNCTION_FAILED            = (32),
 	SD_SDIO_UNKNOWN_FUNCTION           = (33),
-	//标准错误定义
+	//Standard Fatal
 	SD_INTERNAL_ERROR, 
 	SD_NOT_CONFIGURED,
 	SD_REQUEST_PENDING, 
