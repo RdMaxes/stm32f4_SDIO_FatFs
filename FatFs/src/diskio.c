@@ -19,16 +19,12 @@ DSTATUS disk_initialize (
 	BYTE pdrv				/* Physical drive nmuber (0..) */
 )
 {
-	DSTATUS stat;
-	//int result;
+	int result;
 
 	switch (pdrv) {
 	case SDCARD:
-		//result = ATA_disk_initialize();
-
-		// translate the reslut code here
-
-		return stat;
+				result = SD_Init();
+		return result;
 	}
 	return STA_NOINIT;
 }
