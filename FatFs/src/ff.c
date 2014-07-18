@@ -131,6 +131,11 @@
 #error Wrong include file (ff.h).
 #endif
 
+/*Private Functions*/
+static DWORD clust2sect (FATFS* fs,DWORD clst);
+static DWORD get_fat (	FATFS* fs,DWORD clst);
+static FRESULT put_fat (FATFS* fs,DWORD clst,DWORD val);
+
 
 /* Reentrancy related */
 #if _FS_REENTRANT
