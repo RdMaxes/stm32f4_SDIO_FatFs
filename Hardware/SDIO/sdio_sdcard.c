@@ -199,65 +199,10 @@
   *          |      SDIO D0                |   D0          |    7        |
   *          |      SDIO D1                |   D1          |    8        |
   *          +-----------------------------+---------------+-------------+
-  *
-  *  @endverbatim
-  *
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
-  *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
-  ******************************************************************************
-
-  PATCHED BY CLIVE SOURCER32@GMAIL.COM TO SUPPORT MEDIA >4GB 21-JUN-2012
-
-  ******************************************************************************
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4_discovery_sdio_sd.h"
-
-
-/** @addtogroup Utilities
-  * @{
-  */
-
-/** @addtogroup STM32_EVAL
-  * @{
-  */
-
-/** @addtogroup STM32F4_DISCOVERY
-  * @{
-  */
-
-/** @addtogroup STM32F4_DISCOVERY_SDIO_SD
-  * @brief      This file provides all the SD Card driver firmware functions.
-  * @{
-  */
-
-/** @defgroup STM32F4_DISCOVERY_SDIO_SD_Private_Types
-  * @{
-  */
-/**
-  * @}
-  */
-
-
-/** @defgroup STM32F4_DISCOVERY_SDIO_SD_Private_Defines
-  * @{
-  */
+#include "sdio_sdcard.h"
 
 /**
   * @brief  SDIO Static flags, TimeOut, FIFO Address
@@ -332,21 +277,6 @@
   */
 #define SDIO_SEND_IF_COND               ((uint32_t)0x00000008)
 
-/**
-  * @}
-  */
-
-/** @defgroup STM32F4_DISCOVERY_SDIO_SD_Private_Macros
-  * @{
-  */
-/**
-  * @}
-  */
-
-/** @defgroup STM32F4_DISCOVERY_SDIO_SD_Private_Variables
-  * @{
-  */
-
 static uint32_t CardType =  SDIO_STD_CAPACITY_SD_CARD_V1_1;
 static uint32_t CSD_Tab[4], CID_Tab[4], RCA = 0;
 static uint8_t SDSTATUS_Tab[16];
@@ -358,9 +288,6 @@ SD_CardInfo SDCardInfo;
 SDIO_InitTypeDef SDIO_InitStructure;
 SDIO_CmdInitTypeDef SDIO_CmdInitStructure;
 SDIO_DataInitTypeDef SDIO_DataInitStructure;
-/**
-  * @}
-  */
 
 
 /** @defgroup STM32F4_DISCOVERY_SDIO_SD_Private_Function_Prototypes
@@ -375,16 +302,8 @@ static SD_Error CmdResp6Error(uint8_t cmd, uint16_t *prca);
 static SD_Error SDEnWideBus(FunctionalState NewState);
 static SD_Error IsCardProgramming(uint8_t *pstatus);
 static SD_Error FindSCR(uint16_t rca, uint32_t *pscr);
+
 uint8_t convert_from_bytes_to_power_of_two(uint16_t NumberOfBytes);
-
-/**
-  * @}
-  */
-
-
-/** @defgroup STM32F4_DISCOVERY_SDIO_SD_Private_Functions
-  * @{
-  */
 
 /**
   * @brief  DeInitializes the SDIO interface.

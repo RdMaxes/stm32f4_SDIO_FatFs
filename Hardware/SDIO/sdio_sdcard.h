@@ -1,33 +1,14 @@
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F4_DISCOVERY_SDIO_SD_H
-#define __STM32F4_DISCOVERY_SDIO_SD_H
+#ifndef _SDIO_SDCARD_H
+#define _SDIO_SDCARD_H
 
 #ifdef __cplusplus
  extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4_discovery.h"
+#include <stm32f4xx.h>
 
-/** @addtogroup Utilities
-  * @{
-  */
-
-/** @addtogroup STM32_EVAL
-  * @{
-  */
-
-/** @addtogroup STM32F4_DISCOVERY
-  * @{
-  */
-
-/** @addtogroup STM32F4_DISCOVERY_SDIO_SD
-  * @{
-  */
-
-/** @defgroup STM32F4_DISCOVERY_SDIO_SD_Exported_Types
-  * @{
-  */
 typedef enum
 {
 /**
@@ -356,4 +337,4 @@ SD_Error SD_WaitWriteOperation(void);
 }
 #endif
 
-#endif /* __STM32F4_DISCOVERY_SDIO_SD_H */
+#endif 
