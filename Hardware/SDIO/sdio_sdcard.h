@@ -312,32 +312,32 @@ typedef struct
   */
 #define SDIO_TRANSFER_CLK_DIV            ((uint8_t)0x2)
 
-#define SD_SDIO_DMA                   DMA2
-#define SD_SDIO_DMA_CLK               RCC_AHB1Periph_DMA2
+#define SD_SDIO_DMA                  	 DMA2
+#define SD_SDIO_DMA_CLK              	RCC_AHB1Periph_DMA2
 
 #define SD_SDIO_DMA_STREAM3               3
 //#define SD_SDIO_DMA_STREAM6           6
 
 #ifdef SD_SDIO_DMA_STREAM3
- #define SD_SDIO_DMA_STREAM            DMA2_Stream3
- #define SD_SDIO_DMA_CHANNEL           DMA_Channel_4
- #define SD_SDIO_DMA_FLAG_FEIF         DMA_FLAG_FEIF3
- #define SD_SDIO_DMA_FLAG_DMEIF        DMA_FLAG_DMEIF3
- #define SD_SDIO_DMA_FLAG_TEIF         DMA_FLAG_TEIF3
- #define SD_SDIO_DMA_FLAG_HTIF         DMA_FLAG_HTIF3
- #define SD_SDIO_DMA_FLAG_TCIF         DMA_FLAG_TCIF3
- #define SD_SDIO_DMA_IRQn              DMA2_Stream3_IRQn
- #define SD_SDIO_DMA_IRQHANDLER        DMA2_Stream3_IRQHandler
+ #define SD_SDIO_DMA_STREAM           	DMA2_Stream3
+ #define SD_SDIO_DMA_CHANNEL          	DMA_Channel_4
+ #define SD_SDIO_DMA_FLAG_FEIF         	DMA_FLAG_FEIF3
+ #define SD_SDIO_DMA_FLAG_DMEIF        	DMA_FLAG_DMEIF3
+ #define SD_SDIO_DMA_FLAG_TEIF         	DMA_FLAG_TEIF3
+ #define SD_SDIO_DMA_FLAG_HTIF         	DMA_FLAG_HTIF3
+ #define SD_SDIO_DMA_FLAG_TCIF         	DMA_FLAG_TCIF3
+ #define SD_SDIO_DMA_IRQn              	DMA2_Stream3_IRQn
+ #define SD_SDIO_DMA_IRQHANDLER        	DMA2_Stream3_IRQHandler
 #elif defined SD_SDIO_DMA_STREAM6
- #define SD_SDIO_DMA_STREAM            DMA2_Stream6
- #define SD_SDIO_DMA_CHANNEL           DMA_Channel_4
- #define SD_SDIO_DMA_FLAG_FEIF         DMA_FLAG_FEIF6
- #define SD_SDIO_DMA_FLAG_DMEIF        DMA_FLAG_DMEIF6
- #define SD_SDIO_DMA_FLAG_TEIF         DMA_FLAG_TEIF6
- #define SD_SDIO_DMA_FLAG_HTIF         DMA_FLAG_HTIF6
- #define SD_SDIO_DMA_FLAG_TCIF         DMA_FLAG_TCIF6
- #define SD_SDIO_DMA_IRQn              DMA2_Stream6_IRQn
- #define SD_SDIO_DMA_IRQHANDLER        DMA2_Stream6_IRQHandler
+ #define SD_SDIO_DMA_STREAM            	DMA2_Stream6
+ #define SD_SDIO_DMA_CHANNEL           	DMA_Channel_4
+ #define SD_SDIO_DMA_FLAG_FEIF         	DMA_FLAG_FEIF6
+ #define SD_SDIO_DMA_FLAG_DMEIF        	DMA_FLAG_DMEIF6
+ #define SD_SDIO_DMA_FLAG_TEIF         	DMA_FLAG_TEIF6
+ #define SD_SDIO_DMA_FLAG_HTIF         	DMA_FLAG_HTIF6
+ #define SD_SDIO_DMA_FLAG_TCIF         	DMA_FLAG_TCIF6
+ #define SD_SDIO_DMA_IRQn              	DMA2_Stream6_IRQn
+ #define SD_SDIO_DMA_IRQHANDLER        	DMA2_Stream6_IRQHandler
 #endif /* SD_SDIO_DMA_STREAM3 */
 /** @defgroup STM32F4_DISCOVERY_SDIO_SD_Exported_Macros
   * @{

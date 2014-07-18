@@ -319,7 +319,7 @@ void SD_DeInit(void)
 //SDIO IRQHandler
 void SDIO_IRQHandler(void)
 {
-	SD_ProcessIRQ();
+	SD_ProcessIRQSrc();
 }
 
 //SDIO_DMA IRQHandler
