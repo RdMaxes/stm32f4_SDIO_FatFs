@@ -328,7 +328,7 @@ SD_Error SD_Init(void)
   /* SDIO Peripheral Low Level Init */
   SD_LowLevel_Init();
 
-  SDIO_DeInit();
+  //SDIO_DeInit();
 
   errorstatus = SD_PowerON();
 
