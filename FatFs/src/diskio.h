@@ -73,6 +73,12 @@ DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void* buff);
 #define ATA_GET_MODEL		21	/* Get model name */
 #define ATA_GET_SN			22	/* Get serial number */
 
+/* Definitions of physical drive number for each media */
+#define   SDCARD	0
+//#define ATA		0
+//#define MMC		1
+//#define USB		2
+
 #ifdef __cplusplus
 }
 #endif

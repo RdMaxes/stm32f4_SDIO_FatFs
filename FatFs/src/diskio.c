@@ -12,11 +12,6 @@
 //#include "atadrive.h"	/* Example: ATA drive control */
 #include "sdio_sdcard.h"		/* Example: MMC/SDC contorl */
 
-/* Definitions of physical drive number for each media */
-#define ATA		0
-#define MMC		1
-#define USB		2
-
 
 /*-----------------------------------------------------------------------*/
 /* Inidialize a Drive                                                    */
@@ -201,7 +196,7 @@ DRESULT disk_ioctl (
 )
 {
 	DRESULT res;
-	int result;
+	//int result;
 
 	switch (pdrv) {
 	case ATA :
