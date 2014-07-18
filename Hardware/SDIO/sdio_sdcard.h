@@ -367,6 +367,7 @@ SD_Error SD_WriteBlock(uint8_t *writebuff, uint32_t WriteAddr, uint16_t BlockSiz
 SD_Error SD_WriteMultiBlocks(uint8_t *writebuff, uint32_t WriteAddr, uint16_t BlockSize, uint32_t NumberOfBlocks);
 SD_Error SD_WriteMultiBlocksFIXED(uint8_t *writebuff, uint32_t WriteAddr, uint32_t BlockSize, uint32_t NumberOfBlocks);
 SDTransferState SD_GetTransferState(void);
+SD_Error SD_SetDeviceMode(u32 Mode);
 SD_Error SD_StopTransfer(void);
 SD_Error SD_Erase(uint32_t startaddr, uint32_t endaddr);
 SD_Error SD_SendStatus(uint32_t *pcardstatus);
