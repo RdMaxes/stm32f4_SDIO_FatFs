@@ -79,7 +79,7 @@ DRESULT disk_read (
 
 		// translate the reslut code here
 
-		return stat;
+		return res;
 	}
 	return RES_PARERR;
 }
@@ -107,7 +107,7 @@ DRESULT disk_write (
 
 		// translate the reslut code here
 
-		return stat;
+		return res;
 	}
 	return RES_PARERR;
 }
@@ -134,8 +134,14 @@ DRESULT disk_ioctl (
 
 		// translate the reslut code here
 
-		return stat;
+		return res;
 	}
 	return RES_PARERR;
 }
 #endif
+
+
+DWORD get_fattime(void)
+{
+	return 0;
+}
