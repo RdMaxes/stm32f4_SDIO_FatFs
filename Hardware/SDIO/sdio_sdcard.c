@@ -5,7 +5,7 @@
 //@Note  :
 //		 (*)2014/07/18
 //          Original sdio_sdcard.c and sdio_sdcard.h modified from ALIENTEK example.
-//          www.openedv.com ALIENTEK online support
+//          www.openedv.com for ATOM@ALIENTEK online support
 */
 
 #include "sdio_sdcard.h"	  													   
@@ -73,24 +73,35 @@ SD_Error SD_Init(void)
 	return errorstatus;		 
 }
 
-
+//Set SDIO clock frequency
+//clkdiv: clock division
 void SDIO_Clock_Set(u8 clkdiv)
 {
   	SDIO->CLKCR&=0XFFFFFF00;
  	SDIO->CLKCR|=clkdiv; 
 } 
 
+//Send command via SDIO
+//cmdindex: command index, LSB 6 bits are used
+//waitrsp: response type
+//		   00/10 = No Response
+//         01    = Short Response
+//         11    = Long Response
 void SDIO_Send_Cmd(u8 cmdindex,u8 waitrsp,u32 arg)
 {						    
 	SDIO->ARG=arg;
-	SDIO->CMD&=0XFFFFF800;		
-	SDIO->CMD|=cmdindex&0X3F;			 
-	SDIO->CMD|=waitrsp<<6;		
-	SDIO->CMD|=0<<8;			
-  	SDIO->CMD|=1<<10;			
+	SDIO->CMD&=0XFFFFF800;	//clear index and waitrsp	
+	SDIO->CMD|=cmdindex&0X3F;	//set new index
+	SDIO->CMD|=waitrsp<<6;	//set new waitrsp
+	SDIO->CMD|=0<<8; //no wait
+  	SDIO->CMD|=1<<10;	//enable SDIO command	
 }
 
-
+//SDIO send data configuration
+//datatimeout: timeout of sending data
+//datalen: data length, LSB 25 are used
+//blksize: size of block, actual size is 2^blksize bytes
+//dir: 0 = controller-->card, 1 = card-->controller
 void SDIO_Send_Data_Cfg(u32 datatimeout,u32 datalen,u8 blksize,u8 dir)
 {
 	SDIO->DTIMER=datatimeout;
@@ -102,47 +113,46 @@ void SDIO_Send_Data_Cfg(u32 datatimeout,u32 datalen,u8 blksize,u8 dir)
 	SDIO->DCTRL|=1<<0;				
 }  
 
-
+//Power On step of initialization
+//Check all the devices on SDIO interface, get the voltage level and setting clock
+//return: fatal code, 0 = correct
 SD_Error SD_PowerON(void)
 {
  	u8 i=0;
 	SD_Error errorstatus=SD_OK;
 	u32 response=0,count=0,validvoltage=0;
 	u32 SDType=SD_STD_CAPACITY;
-
-	SDIO->CLKCR=0;				
-	SDIO->CLKCR|=0<<9;			
-	SDIO->CLKCR|=0<<10;			
-	SDIO->CLKCR|=0<<11;			
-	SDIO->CLKCR|=0<<13;			
-	SDIO->CLKCR|=0<<14;			
-	SDIO_Clock_Set(SDIO_INIT_CLK_DIV);		 
- 	SDIO->POWER=0X03;			 
-  	SDIO->CLKCR|=1<<8;			  
+	//Configure CLKCR register
+	SDIO->CLKCR=0;		//clear setting				
+	SDIO->CLKCR|=0<<9;	//not power-save mode		
+	SDIO->CLKCR|=0<<10;	//disable bypass mode		
+	SDIO->CLKCR|=0<<11;	//1 bit data width		
+	SDIO->CLKCR|=0<<13;	//SDIOCLK generates SDIOCK on rising edge		
+	SDIO->CLKCR|=0<<14;	//disable hardware flow control		
+	SDIO_Clock_Set(SDIO_INIT_CLK_DIV);	//set clock frequency
+ 	SDIO->POWER=0X03;	//power on, enable clock
+  	SDIO->CLKCR|=1<<8;	//SDIOCK enabled
    	for(i=0;i<74;i++)
 	{
-		SDIO_Send_Cmd(SD_CMD_GO_IDLE_STATE,0,0);												  
+		SDIO_Send_Cmd(SD_CMD_GO_IDLE_STATE,0,0);	//entering IDLE STAGE											  
 		errorstatus=CmdError();
 		if(errorstatus==SD_OK)break;
  	}
- 	if(errorstatus)return errorstatus;
-	SDIO_Send_Cmd(SDIO_SEND_IF_COND,1,SD_CHECK_PATTERN);
- 														
-														
-														
-  	errorstatus=CmdResp7Error();						
- 	if(errorstatus==SD_OK) 								
+ 	if(errorstatus)return errorstatus; //return fatal code(error)
+	SDIO_Send_Cmd(SDIO_SEND_IF_COND,1,SD_CHECK_PATTERN);//send CMD8, check card interface															
+  	errorstatus=CmdResp7Error();//waiting for R7 response						
+ 	if(errorstatus==SD_OK)	//get R7 response 								
 	{
-		CardType=SDIO_STD_CAPACITY_SD_CARD_V2_0;		
-		SDType=SD_HIGH_CAPACITY;			   			
+		CardType=SDIO_STD_CAPACITY_SD_CARD_V2_0;	//SD 2.0		
+		SDType=SD_HIGH_CAPACITY;	//R7 response normal
 	}else 
 	{
 		SDIO_Send_Cmd(SD_CMD_APP_CMD,1,0);					  
 	   	errorstatus=CmdResp1Error(SD_CMD_APP_CMD);
 	}
-	SDIO_Send_Cmd(SD_CMD_APP_CMD,1,0);					
-	errorstatus=CmdResp1Error(SD_CMD_APP_CMD); 		 	  
-	if(errorstatus==SD_OK)
+	SDIO_Send_Cmd(SD_CMD_APP_CMD,1,0);	//send CMD55				
+	errorstatus=CmdResp1Error(SD_CMD_APP_CMD);	//waiting for R1 response		 	  
+	if(errorstatus==SD_OK)	//it's SD2.0 or SD1.1 card, otherwise it's MMC card
 	{																  
 		
 		while((!validvoltage)&&(count<SD_MAX_VOLT_TRIAL))
@@ -166,7 +176,8 @@ SD_Error SD_PowerON(void)
 		{
 			CardType=SDIO_HIGH_CAPACITY_SD_CARD;
 		}
- 	}else
+ 	}
+ 	else //MMC card 
 	{
 		CardType=SDIO_MULTIMEDIA_CARD;	  
 		
@@ -189,18 +200,21 @@ SD_Error SD_PowerON(void)
 }
 
 
+//Power Off SD card
+//return: fatal code, 0 = correct
 SD_Error SD_PowerOFF(void)
 {
-  	SDIO->POWER&=~(3<<0);	
+  	SDIO->POWER&=~(3<<0);	//power off
 	return SD_OK;		  
 }   
 
-
+//Initialize cards
+//return: fatal code
 SD_Error SD_InitializeCards(void)
 {
  	SD_Error errorstatus=SD_OK;
 	u16 rca = 0x01;
- 	if((SDIO->POWER&0X03)==0)return SD_REQUEST_NOT_APPLICABLE;
+ 	if((SDIO->POWER&0X03)==0)return SD_REQUEST_NOT_APPLICABLE;	//check power, ensure it's power on
  	if(SDIO_SECURE_DIGITAL_IO_CARD!=CardType)			
 	{
 		SDIO_Send_Cmd(SD_CMD_ALL_SEND_CID,3,0);			
@@ -211,6 +225,7 @@ SD_Error SD_InitializeCards(void)
 		CID_Tab[2]=SDIO->RESP3;
 		CID_Tab[3]=SDIO->RESP4;
 	}
+	//Determine card type
 	if((SDIO_STD_CAPACITY_SD_CARD_V1_1==CardType)||(SDIO_STD_CAPACITY_SD_CARD_V2_0==CardType)||(SDIO_SECURE_DIGITAL_IO_COMBO_CARD==CardType)||(SDIO_HIGH_CAPACITY_SD_CARD==CardType))//≈–∂œø®¿‡–Õ
 	{
 		SDIO_Send_Cmd(SD_CMD_SET_REL_ADDR,1,0);			
@@ -223,7 +238,7 @@ SD_Error SD_InitializeCards(void)
 		errorstatus=CmdResp2Error(); 					
 		if(errorstatus!=SD_OK)return errorstatus;   	
     }
-	if (SDIO_SECURE_DIGITAL_IO_CARD!=CardType)			
+	if (SDIO_SECURE_DIGITAL_IO_CARD!=CardType)	//not SECURE_DIGITAL_IO_CARD		
 	{
 		RCA = rca;
 		SDIO_Send_Cmd(SD_CMD_SEND_CSD,3,(u32)(rca<<16));	   
@@ -234,10 +249,12 @@ SD_Error SD_InitializeCards(void)
 		CSD_Tab[2]=SDIO->RESP3;						
 		CSD_Tab[3]=SDIO->RESP4;					    
 	}
-	return SD_OK;
+	return SD_OK;	//Succecc initialization
 } 
 
-
+//Get card information
+//cardinfo: pointer to store card information
+//return: fatal code
 SD_Error SD_GetCardInfo(SD_CardInfo *cardinfo)
 {
  	SD_Error errorstatus=SD_OK;
@@ -358,7 +375,10 @@ SD_Error SD_GetCardInfo(SD_CardInfo *cardinfo)
 	return errorstatus;
 }
 
-
+//Set SDIO data bus width (MMC does not support 4bit mode)
+//wmode: data bus width mode, 
+//       0 = 1bit, 1 = 4bit, 2 = 8bit
+//return: fatal code
 SD_Error SD_EnableWideBusOperation(u32 wmode)
 {
   	SD_Error errorstatus=SD_OK;
@@ -380,7 +400,8 @@ SD_Error SD_EnableWideBusOperation(u32 wmode)
 	return errorstatus; 
 }
 
-
+//Set SD card working mode
+//return: fatal code
 SD_Error SD_SetDeviceMode(u32 Mode)
 {
 	SD_Error errorstatus = SD_OK;
@@ -389,7 +410,11 @@ SD_Error SD_SetDeviceMode(u32 Mode)
 	return errorstatus;	    
 }
 
-
+//Select Card
+//Send out CMD7, selec the card with rca = addr, cancel other cards selection. 
+//If addr is 0, choose no cards.
+//addr:rca address of the desired card
+//return: fatal code
 SD_Error SD_SelectDeselect(u32 addr)
 {
  	SDIO_Send_Cmd(SD_CMD_SEL_DESEL_CARD,1,addr);		 	   
@@ -397,6 +422,10 @@ SD_Error SD_SelectDeselect(u32 addr)
 }
 
 
+//Read one block
+//buf: buffer to store data (must be 4bytes alignment)
+//addr: read out sector address
+//blksize: block size (for SD card is 512bytes usually)
 SD_Error SD_ReadBlock(u8 *buf,u32 addr,u16 blksize)
 {	  
 	SD_Error errorstatus=SD_OK;
@@ -475,7 +504,11 @@ SD_Error SD_ReadBlock(u8 *buf,u32 addr,u16 blksize)
  	return errorstatus; 
 }
 
-
+//Read multi blocks
+//addr: start block address to read
+//blksize: block size
+//nblks: number of blocks to read
+//return: fatal code
 SD_Error SD_ReadMultiBlocks(u8 *buf,u32 addr,u16 blksize,u32 nblks)
 {
   	SD_Error errorstatus=SD_OK;
@@ -559,7 +592,7 @@ SD_Error SD_ReadMultiBlocks(u8 *buf,u32 addr,u16 blksize,u32 nblks)
 	 	    SD_DMA_Config((u32*)buf,nblks*blksize,0);
 			timeout=SDIO_DATATIMEOUT;
 	 		while(((DMA2->ISR&0X2000)==RESET)&&timeout)timeout--; 
-			if(timeout==0)return SD_DATA_TIMEOUT;//≥¨ ±
+			if(timeout==0)return SD_DATA_TIMEOUT;
 			while((TransferEnd==0)&&(TransferError==SD_OK)); 
 			if(TransferError!=SD_OK)errorstatus=TransferError;  	 
 		}		 
@@ -567,7 +600,10 @@ SD_Error SD_ReadMultiBlocks(u8 *buf,u32 addr,u16 blksize,u32 nblks)
 	return errorstatus;
 }			    																  
 
-
+//Write one block
+//addr: block address to be written
+//blksize: block size
+//return: fatal code
 SD_Error SD_WriteBlock(u8 *buf,u32 addr,  u16 blksize)
 {
 	SD_Error errorstatus = SD_OK;
@@ -684,7 +720,11 @@ SD_Error SD_WriteBlock(u8 *buf,u32 addr,  u16 blksize)
 	return errorstatus;
 }
 
-										   
+//Write multi blocks
+//addr: start block address to be written
+//blksize: block size
+//nblks: number of blocks
+//return: fatal code										   
 SD_Error SD_WriteMultiBlocks(u8 *buf,u32 addr,u16 blksize,u32 nblks)
 {
 	SD_Error errorstatus = SD_OK;
@@ -807,16 +847,17 @@ SD_Error SD_WriteMultiBlocks(u8 *buf,u32 addr,u16 blksize,u32 nblks)
 	return errorstatus;	   
 }
 
-	  
+//SDIO IRQHandler	  
 void SDIO_IRQHandler(void) 
 {											
  	SD_ProcessIRQSrc();
 }	 																    
 
-
+//SDIO interrupt 
+//return: fatal code
 SD_Error SD_ProcessIRQSrc(void)
 {
-	if(SDIO->STA&(1<<8))
+	if(SDIO->STA&(1<<8))	//Rx finish interrupt
 	{	 
 		if (StopCondition==1)
 		{
@@ -828,35 +869,35 @@ SD_Error SD_ProcessIRQSrc(void)
  		TransferEnd = 1;
 		return(TransferError);
 	}
- 	if(SDIO->STA&(1<<1))
+ 	if(SDIO->STA&(1<<1))	//CRC error interrupt
 	{
 		SDIO->ICR|=1<<1;
 		SDIO->MASK&=~((1<<1)|(1<<3)|(1<<8)|(1<<14)|(1<<15)|(1<<4)|(1<<5)|(1<<9));
 	    TransferError = SD_DATA_CRC_FAIL;
 	    return(SD_DATA_CRC_FAIL);
 	}
- 	if(SDIO->STA&(1<<3))
+ 	if(SDIO->STA&(1<<3))	//data timeout interrupt
 	{
 		SDIO->ICR|=1<<3;
 		SDIO->MASK&=~((1<<1)|(1<<3)|(1<<8)|(1<<14)|(1<<15)|(1<<4)|(1<<5)|(1<<9));
 	    TransferError = SD_DATA_TIMEOUT;
 	    return(SD_DATA_TIMEOUT);
 	}
-  	if(SDIO->STA&(1<<5))
+  	if(SDIO->STA&(1<<5))	//FIFO upper-overload interrupt
 	{
 		SDIO->ICR|=1<<5;
 		SDIO->MASK&=~((1<<1)|(1<<3)|(1<<8)|(1<<14)|(1<<15)|(1<<4)|(1<<5)|(1<<9));
 	    TransferError = SD_RX_OVERRUN;
 	    return(SD_RX_OVERRUN);
 	}
-   	if(SDIO->STA&(1<<4))
+   	if(SDIO->STA&(1<<4))	//FIFO downer-overload interrupt
 	{
 		SDIO->ICR|=1<<4;
 		SDIO->MASK&=~((1<<1)|(1<<3)|(1<<8)|(1<<14)|(1<<15)|(1<<4)|(1<<5)|(1<<9));
 	    TransferError = SD_TX_UNDERRUN;
 	    return(SD_TX_UNDERRUN);
 	}
-	if(SDIO->STA&(1<<9))
+	if(SDIO->STA&(1<<9))	//Srart bit error interrupt
 	{
 		SDIO->ICR|=1<<9;
 		SDIO->MASK&=~((1<<1)|(1<<3)|(1<<8)|(1<<14)|(1<<15)|(1<<4)|(1<<5)|(1<<9));
@@ -866,7 +907,8 @@ SD_Error SD_ProcessIRQSrc(void)
 	return(SD_OK);
 }
   
-
+//Check CMD execution
+//return: fatal code
 SD_Error CmdError(void)
 {
 	SD_Error errorstatus = SD_OK;
@@ -880,7 +922,8 @@ SD_Error CmdError(void)
 	return errorstatus;
 }	 
 
-
+//Check R7 response
+//return: fatal code
 SD_Error CmdResp7Error(void)
 {
 	SD_Error errorstatus=SD_OK;
@@ -905,7 +948,8 @@ SD_Error CmdResp7Error(void)
 	return errorstatus;
 }	   
 
-
+//Check R1 response
+//return: fatal code
 SD_Error CmdResp1Error(u8 cmd)
 {	  
    	u32 status;
@@ -929,7 +973,8 @@ SD_Error CmdResp1Error(u8 cmd)
 	return (SD_Error)(SDIO->RESP1&SD_OCR_ERRORBITS);
 }
 
-
+//Check R3 response
+//return: fatal code
 SD_Error CmdResp3Error(void)
 {
 	u32 status;						 
@@ -947,7 +992,8 @@ SD_Error CmdResp3Error(void)
  	return SD_OK;								  
 }
 
-
+//Check R2 response
+//return: fatal code
 SD_Error CmdResp2Error(void)
 {
 	SD_Error errorstatus=SD_OK;
@@ -973,6 +1019,8 @@ SD_Error CmdResp2Error(void)
  	return errorstatus;								    		 
 } 
 
+//Check R6 response
+//return: fatal code
 SD_Error CmdResp6Error(u8 cmd,u16*prca)
 {
 	SD_Error errorstatus=SD_OK;
@@ -1010,7 +1058,9 @@ SD_Error CmdResp6Error(u8 cmd,u16*prca)
 	return errorstatus;
 }
 
-
+//Enable wide data bus mode
+//enx: 0 = disable, 1 = enable
+//return: fatal code
 SD_Error SDEnWideBus(u8 enx)
 {
 	SD_Error errorstatus = SD_OK;
@@ -1032,7 +1082,9 @@ SD_Error SDEnWideBus(u8 enx)
 	}else return SD_REQUEST_NOT_APPLICABLE;				 
 }												   
 
-
+//Check if the card is writing
+//pstatus: current status
+//return: fatal code
 SD_Error IsCardProgramming(u8 *pstatus)
 {
  	vu32 respR1 = 0, status = 0; 
@@ -1056,7 +1108,10 @@ SD_Error IsCardProgramming(u8 *pstatus)
 	return SD_OK;
 }
 
-	   
+//Get register SCR value of SD card
+//rca: address of SD card
+//pscr: data buffer to store SCR content
+//return: fatal code   
 SD_Error FindSCR(u16 rca,u32 *pscr)
 { 
 	u32 index = 0;
@@ -1120,7 +1175,12 @@ u8 convert_from_bytes_to_power_of_two(u16 NumberOfBytes)
 	return count;
 } 	 
 
-
+//Configure SDIO DMA function
+//mbuf: memory address
+//bufsize: data transmission sieze
+//dir: transmission direction
+//	  1 = memory-->SDIO (write)
+//    0 = SDIO-->memory (read)
 void SD_DMA_Config(u32*mbuf,u32 bufsize,u8 dir)
 {				  
  	DMA2->IFCR|=(0XF<<12);				
@@ -1139,7 +1199,13 @@ void SD_DMA_Config(u32*mbuf,u32 bufsize,u8 dir)
  	DMA2_Channel4->CCR|=1<<0; 				
 }   
 
-			  				 
+//Read SD card
+//buf: buffer to store data
+//sector: sector address
+//cnt: number of sector
+//return: 
+//      0 = normal
+// others = fatal code			  				 
 u8 SD_ReadDisk(u8*buf,u32 sector,u8 cnt)
 {
 	u8 sta=SD_OK;
@@ -1161,7 +1227,13 @@ u8 SD_ReadDisk(u8*buf,u32 sector,u8 cnt)
 	return sta;
 }
 
-
+//Write SD card
+//buf: data buffer to write
+//sector: sector address
+//cnt: number of sector
+//return: 
+//      0 = normal
+// others = fatal code	
 u8 SD_WriteDisk(u8*buf,u32 sector,u8 cnt)
 {
 	u8 sta=SD_OK;
@@ -1182,10 +1254,3 @@ u8 SD_WriteDisk(u8*buf,u32 sector,u8 cnt)
 	}
 	return sta;
 }
-
-
-
-
-
-
-
