@@ -19,7 +19,7 @@ int main(void)
 	LED_Init();
 	Usart2_Init(115200);
 	Myprintf_Init(0x00,myputc);
-	while(SD_Init()!=0)
+	while(SD_Init()!=SD_OK)
 		{
 			LED_loop();
 		}
