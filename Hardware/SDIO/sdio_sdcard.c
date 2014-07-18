@@ -393,11 +393,11 @@ SD_Error SD_Init(void)
 
   if (errorstatus == SD_OK)
   {
-    errorstatus = SD_EnableWideBusOperation(SDIO_BusWide_4b);
+    errorstatus = SD_EnableWideBusOperation(SDIO_BusWide_4b); //4 bit data width
   }
   if((errorstatus==SD_OK)||(SDIO_MULTIMEDIA_CARD==CardType))
   {  		    
-	errorstatus=SD_SetDeviceMode(SD_DMA_MODE);	
+	errorstatus=SD_SetDeviceMode(SD_DMA_MODE); //switch to DMA mode	
 	//errorstatus=SD_SetDeviceMode(SD_POLLING_MODE);
   }
   return(errorstatus);
