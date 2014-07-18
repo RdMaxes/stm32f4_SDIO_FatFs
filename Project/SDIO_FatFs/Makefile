@@ -44,13 +44,15 @@ USER_LIB=../../User_Lib
 SRC+=	./main.c \
 	$(HARDWARE)/LED/led.c \
 	$(PERIPHERAL)/usart2/usart2.c \
-	$(USER_LIB)/myprintf/myprintf.c 
+	$(USER_LIB)/myprintf/myprintf.c \
+	$(HARDWARE)/SDIO/sdio_sdcard.c
 
 #User Header Files
 CFLAGS_INCLUDE+=-I./ \
 		-I$(HARDWARE)/LED \
 		-I$(PERIPHERAL)/usart2 \
-		-I$(USER_LIB)/myprintf 
+		-I$(USER_LIB)/myprintf \
+		-I$(HARDWARE)/SDIO 
 #============================================================================# 
 CFLAGS_DEFINE= \
         -D USE_STDPERIPH_DRIVER \
