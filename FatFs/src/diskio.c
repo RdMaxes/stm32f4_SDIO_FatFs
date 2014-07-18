@@ -39,6 +39,7 @@ DSTATUS disk_status (
 	BYTE pdrv		/* Physical drive nmuber (0..) */
 )
 {
+	pdrv--;
 	return 0;
 }
 
@@ -55,18 +56,18 @@ DRESULT disk_read (
 	UINT count		/* Number of sectors to read (1..128) */
 )
 {
-	DRESULT res;
-	//int result;
-
 	switch (pdrv) {
 	case SDCARD:
-		//result = ATA_disk_initialize();
-
-		// translate the reslut code here
-
-		return res;
+				if(count==1)//single read
+				{
+					SD_ReadBlock((uint8_t *)(sector<<9),(u32)(&buff[0]),512);
+				}
+				else//Multi-read
+				{
+					SD_ReadMultiBlocks((uint8_t *)(sector<<9),(u32)(&buff[0]),512,count);
+				}
 	}
-	return RES_PARERR;
+	return RES_OK;
 }
 
 
@@ -83,18 +84,18 @@ DRESULT disk_write (
 	UINT count			/* Number of sectors to write (1..128) */
 )
 {
-	DRESULT res;
-	//int result;
-
 	switch (pdrv) {
 	case SDCARD:
-		//result = ATA_disk_initialize();
-
-		// translate the reslut code here
-
-		return res;
+				if(count==1)//single write
+				{
+					SD_WriteBlock((uint8_t *)(sector<<9),(u32)(&buff[0]),512);
+				}
+				else//Multi-write
+				{
+					SD_WriteMultiBlocks((uint8_t *)(sector<<9),(u32)(&buff[0]),512,count);
+				}
 	}
-	return RES_PARERR;
+	return RES_OK;
 }
 #endif
 
@@ -110,18 +111,7 @@ DRESULT disk_ioctl (
 	void *buff		/* Buffer to send/receive control data */
 )
 {
-	DRESULT res;
-	//int result;
-
-	switch (pdrv) {
-	case SDCARD:
-		//result = ATA_disk_initialize();
-
-		// translate the reslut code here
-
-		return res;
-	}
-	return RES_PARERR;
+	return RES_OK;
 }
 #endif
 
