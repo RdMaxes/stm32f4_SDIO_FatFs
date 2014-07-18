@@ -34,9 +34,8 @@ SD_Error SD_Init(void)
 	//SDIO pin configuration
 	RCC->APB2ENR|=1<<4;  //enable PORTC clock  	   	 
 	RCC->APB2ENR|=1<<5;  //enable PORTD clock  	
-  	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SDIO,ENABLE);	 //enable SDIO clock
-  //	RCC->AHBENR|=1<<10;  //enable SDIO clock  		   	 
- 	RCC->AHBENR|=1<<1;   //enable DMA2 clock 	
+  	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SDIO,ENABLE);	 //enable SDIO clock 
+   	RCC_AHB1PeriphResetCmd(RCC_AHB1Periph_DMA2,ENABLE);	 //enable DMA2 clock  	
 
 	GPIOC->CRH&=0XFFF00000; 
 	GPIOC->CRH|=0X000BBBBB;	//PC.08~PC.12 Alternate-Push-Pull
