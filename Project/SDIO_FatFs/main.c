@@ -16,7 +16,7 @@ DIR dir;			//directory
 FILINFO FileInfo;	//file information 
 
 const char rootdir[] = "0:/"; //root directory
-const char opnfile[] = "firmware.bin"; //file name 
+const char opnfile[] = "test.text"; //file name 
 
 //Delay for a while
 //time: delay time
@@ -27,6 +27,8 @@ static void delay(int32_t time)
 
 int main(void)
 {	
+	uint32_t stream_cnt = 0; //data stream counter
+	
 	LED_Init();
 	Usart2_Init(115200);
 	Myprintf_Init(0x00,myputc);
@@ -44,8 +46,12 @@ int main(void)
 			res = f_open(&fsrc,opnfile,FA_READ); //open assigned file
 			if(!res)
 			{
-				my_printf("Opening file: %s \r\n");
+				my_printf("Opening file: %s \r\n",opnfile);
 				my_printf("File Content:\r\n");
+				for(;;)
+				{
+					for(a=0;a<512;)
+				}
 			}
 		}
 
