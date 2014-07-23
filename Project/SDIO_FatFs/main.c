@@ -34,6 +34,7 @@ int main(void)
 		{
 			LED_loop();
 		}
+	//print SD card size
 	my_printf("SD Card Size: %d Bytes\r\n",(uint32_t)SDCardInfo.CardCapacity);
 	while(1) 
 	{
