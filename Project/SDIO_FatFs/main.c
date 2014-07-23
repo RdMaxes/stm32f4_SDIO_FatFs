@@ -45,7 +45,7 @@ int main(void)
 			if(!res)
 			{
 				my_printf("Opening file: %s \r\n");
-				
+				my_printf("File Content:\r\n");
 			}
 		}
 
