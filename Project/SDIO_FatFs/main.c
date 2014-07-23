@@ -9,7 +9,7 @@
 
 //Global Variables for FatFs
 FATFS fs;			//work area (file system object) for logical drive
-FILL fsrc, fdst;	//data stream object
+FIL fsrc, fdst;	//data stream object
 FRESULT res;		//FatFs function common result
 UINT br, bw;		//file R/W counter
 DIR dir;			//directory 
