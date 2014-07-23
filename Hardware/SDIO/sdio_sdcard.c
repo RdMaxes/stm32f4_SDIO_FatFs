@@ -339,10 +339,11 @@ SD_Error SD_Init(void)
   __IO SD_Error errorstatus = SD_OK;
   NVIC_InitTypeDef NVIC_InitStruct;
 
+  /* SDIO Peripheral Low Level DeInit */
+  SD_DeInit();
   /* SDIO Peripheral Low Level Init */
   SD_LowLevel_Init();
 
-  SD_DeInit();
   //Configure SDIO Global Interrupt
 	NVIC_InitStruct.NVIC_IRQChannel = SDIO_IRQn;
 	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
