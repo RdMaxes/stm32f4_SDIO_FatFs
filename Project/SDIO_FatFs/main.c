@@ -36,15 +36,16 @@ int main(void)
 		}
 	//print SD card size
 	my_printf("SD Card Size: %d Bytes\r\n",(uint32_t)SDCardInfo.CardCapacity);
-	//mount logical disk
+	//mount logical disk 0
 		f_mount(&fs,0,1);
 		res = f_opendir(&dir,rootdir); //open assigned directory
 		if(res==FR_OK)
 		{
 			res = f_open(&fsrc,opnfile,FA_READ); //open assigned file
 		}
-	//unmount logical disk
+
 		f_mount(0x00,0,1);	
+	//unmount logical disk 0
 	while(1) 
 	{
 		delay(8000000);
