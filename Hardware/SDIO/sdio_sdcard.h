@@ -185,6 +185,10 @@ typedef struct
   * @}
   */
 
+  
+//Exported Variables
+extern SD_CardInfo SDCardInfo;
+
 /** @defgroup STM32F4_DISCOVERY_SDIO_SD_Exported_Constants
   * @{
   */
