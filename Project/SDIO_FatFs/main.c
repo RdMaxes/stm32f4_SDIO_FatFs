@@ -59,7 +59,8 @@ int main(void)
 					for(stream_cnt=0;stream_cnt<READ_BUF_LEN;stream_cnt++)	rd_buf[stream_cnt] = 0x00;
 					//read out data with READ_BUF_LEN length
 					res = f_read(&fsrc,rd_buf,READ_BUF_LEN,&br); 
-
+					//print out
+					my_printf("%s",rd_buf);
 				}
 			}
 		}
