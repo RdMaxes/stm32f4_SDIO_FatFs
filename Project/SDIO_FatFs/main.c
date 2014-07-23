@@ -16,7 +16,7 @@ static void delay(int32_t time)
 
 int main(void)
 {	
-	double cardsize = 0;
+	int32_t cardsize = 0;
 
 	LED_Init();
 	Usart2_Init(115200);
@@ -25,8 +25,8 @@ int main(void)
 		{
 			LED_loop();
 		}
-	cardsize = (double)SDCardInfo.CardCapacity;
-	my_printf("SD Card Size(GB):%lf",cardsize/1024/1024/1024);
+	cardsize = SDCardInfo.CardCapacity;
+	my_printf("SD Card Size(Bytes):%d\r\n",cardsize);
 	while(1) 
 	{
 		delay(8000000);
