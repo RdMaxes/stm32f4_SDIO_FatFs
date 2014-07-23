@@ -42,6 +42,11 @@ int main(void)
 		if(res==FR_OK)
 		{
 			res = f_open(&fsrc,opnfile,FA_READ); //open assigned file
+			if(!res)
+			{
+				my_printf("Opening file: %s \r\n");
+				
+			}
 		}
 
 		f_mount(0x00,0,1);	
