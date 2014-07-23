@@ -16,7 +16,7 @@ DIR dir;			//directory
 FILINFO FileInfo;	//file information 
 
 const char rootdir[] = "0:/"; //root directory
-
+const char opnfile[] = "firmware.bin"; //file name 
 
 //Delay for a while
 //time: delay time
@@ -38,7 +38,11 @@ int main(void)
 	my_printf("SD Card Size: %d Bytes\r\n",(uint32_t)SDCardInfo.CardCapacity);
 	//mount logical disk
 		f_mount(&fs,0,1);
-		
+		res = f_opendir(&dir,rootdir); //open assigned directory
+		if(res==FR_OK)
+		{
+			res = f_open(&fsrc,opnfile,FA_READ); //open assigned file
+		}
 	//unmount logical disk
 		f_mount(NULL,0,1);	
 	while(1) 
