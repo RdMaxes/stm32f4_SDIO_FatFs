@@ -21,6 +21,7 @@ FILINFO FileInfo;	//file information
 const char rootdir[] = "0:/"; //root directory
 const char opnfile[] = "test.text"; //file name 
 uint8_t rd_buf[READ_BUF_LEN] = {0};	//read out buffer
+
 //Delay for a while
 //time: delay time
 static void delay(int32_t time)
