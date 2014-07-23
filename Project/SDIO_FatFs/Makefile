@@ -71,6 +71,7 @@ CFLAGS_NEW_LIB_NANO= \
 		--specs=nano.specs --specs=nosys.specs -u _printf_float
 CFLAGS_WARNING= \
 		-Wall \
+		-Wno-unused-parameter \
 		-Wextra \
 		-Wdouble-promotion \
 		-Wshadow \
