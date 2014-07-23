@@ -8,7 +8,7 @@
 #include "ff.h"
 
 //definitions for FatFs
-#READ_BUF_LEN 1024 //read out buffer length
+#define READ_BUF_LEN 1024 //read out buffer length
 
 //Global Variables for FatFs
 FATFS fs;			//work area (file system object) for logical drive
