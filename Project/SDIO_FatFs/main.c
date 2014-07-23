@@ -51,7 +51,9 @@ int main(void)
 				stream_cnt=0;
 				for(;;)
 				{
-					for(stream_cnt=0;stream_cnt<512;stream_cnt++)
+					//clear buffer
+					for(stream_cnt=0;stream_cnt<512;stream_cnt++)	rd_buf[stream_cnt] = 0x00;
+
 				}
 			}
 		}
