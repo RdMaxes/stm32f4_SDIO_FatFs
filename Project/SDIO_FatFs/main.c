@@ -65,6 +65,14 @@ int main(void)
 					if(res||(br<READ_BUF_LEN))	break;
 				}
 			}
+			else
+			{
+				my_printf("Fatal, no such file.\r\n");
+			}
+		}
+		else
+		{
+			my_printf("Fatal, no such directory.\r\n");
 		}
 
 		f_mount(0x00,0,1);	
