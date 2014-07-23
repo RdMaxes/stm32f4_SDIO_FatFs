@@ -23,7 +23,7 @@ int main(void)
 		{
 			LED_loop();
 		}
-	my_printf("SD Card Size(Bytes):%d\r\n",(uint32_t)SDCardInfo.CardCapacity);
+	my_printf("SD Card Size: %d Bytes\r\n",(uint32_t)SDCardInfo.CardCapacity);
 	while(1) 
 	{
 		delay(8000000);
