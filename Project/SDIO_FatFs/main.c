@@ -44,7 +44,7 @@ int main(void)
 			res = f_open(&fsrc,opnfile,FA_READ); //open assigned file
 		}
 	//unmount logical disk
-		f_mount(NULL,0,1);	
+		f_mount(0x00,0,1);	
 	while(1) 
 	{
 		delay(8000000);
