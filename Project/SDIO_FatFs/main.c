@@ -28,7 +28,7 @@ static void delay(int32_t time)
 int main(void)
 {	
 	uint32_t stream_cnt = 0; //data stream counter
-	
+
 	LED_Init();
 	Usart2_Init(115200);
 	Myprintf_Init(0x00,myputc);
@@ -50,7 +50,7 @@ int main(void)
 				my_printf("File Content:\r\n");
 				for(;;)
 				{
-					for(a=0;a<512;)
+					for(stream_cnt=0;stream_cnt<512;stream_cnt++)
 				}
 			}
 		}
