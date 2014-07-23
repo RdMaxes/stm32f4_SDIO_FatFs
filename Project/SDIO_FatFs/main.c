@@ -7,6 +7,14 @@
 #include "diskio.h"
 #include "ff.h"
 
+//Global Variables for FatFs
+FATFS fs;			//work area (file system object) for logical drive
+FILL fsrc, fdst;	//data stream object
+FRESULT res;		//FatFs function common result
+UINT br, bw;		//file R/W counter
+DIR dir;			//directory 
+FILINFO FileInfo;	//file information 
+
 //Delay for a while
 //time: delay time
 static void delay(int32_t time)
