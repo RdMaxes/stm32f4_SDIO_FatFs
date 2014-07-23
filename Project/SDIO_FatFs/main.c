@@ -37,7 +37,10 @@ int main(void)
 	//print SD card size
 	my_printf("SD Card Size: %d Bytes\r\n",(uint32_t)SDCardInfo.CardCapacity);
 	//mount logical disk
-	f_mount(&fs,0,1);
+		f_mount(&fs,0,1);
+		
+	//unmount logical disk
+		f_mount(NULL,0,1);	
 	while(1) 
 	{
 		delay(8000000);
