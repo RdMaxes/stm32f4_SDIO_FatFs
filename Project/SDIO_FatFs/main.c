@@ -15,6 +15,9 @@ UINT br, bw;		//file R/W counter
 DIR dir;			//directory 
 FILINFO FileInfo;	//file information 
 
+const char rootdir[] = "0:/"; //root directory
+
+
 //Delay for a while
 //time: delay time
 static void delay(int32_t time)
