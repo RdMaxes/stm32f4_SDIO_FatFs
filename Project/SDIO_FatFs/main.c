@@ -7,6 +7,9 @@
 #include "diskio.h"
 #include "ff.h"
 
+//definitions for FatFs
+#READ_BUF_LEN 1024 //read out buffer length
+
 //Global Variables for FatFs
 FATFS fs;			//work area (file system object) for logical drive
 FIL fsrc, fdst;	//data stream object
@@ -17,7 +20,7 @@ FILINFO FileInfo;	//file information
 
 const char rootdir[] = "0:/"; //root directory
 const char opnfile[] = "test.text"; //file name 
-uint8_t rd_buf[1024] = {0};	//read out buffer
+uint8_t rd_buf[READ_BUF_LEN] = {0};	//read out buffer
 //Delay for a while
 //time: delay time
 static void delay(int32_t time)
@@ -52,7 +55,7 @@ int main(void)
 				for(;;)
 				{
 					//clear buffer
-					for(stream_cnt=0;stream_cnt<512;stream_cnt++)	rd_buf[stream_cnt] = 0x00;
+					for(stream_cnt=0;stream_cnt<READ_BUF_LEN;stream_cnt++)	rd_buf[stream_cnt] = 0x00;
 
 				}
 			}
