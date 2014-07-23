@@ -61,6 +61,8 @@ int main(void)
 					res = f_read(&fsrc,rd_buf,READ_BUF_LEN,&br); 
 					//print out
 					my_printf("%s",rd_buf);
+					//if error occur or reach end of file, break
+					if(res||(br<READ_BUF_LEN))	break;
 				}
 			}
 		}
