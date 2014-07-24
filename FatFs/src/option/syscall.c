@@ -13,30 +13,33 @@
 /*------------------------------------------------------------------------*/
 /* Create a Synchronization Object
 /*------------------------------------------------------------------------*/
-/* This function is called by f_mount() function to create a new
-/  synchronization object, such as semaphore and mutex. When a 0 is
-/  returned, the f_mount() function fails with FR_INT_ERR.
+/* This function is called in f_mount function to create a new
+/  synchronization object, such as semaphore and mutex. When a FALSE is
+/  returned, the f_mount function fails with FR_INT_ERR.
 */
 
 int ff_cre_syncobj (	/* 1:Function succeeded, 0:Could not create due to any error */
 	BYTE vol,			/* Corresponding logical drive being processed */
-	_SYNC_t* sobj		/* Pointer to return the created sync object */
+	_SYNC_t *sobj		/* Pointer to return the created sync object */
 )
 {
 	int ret;
+//	static _SYNC_t sem[_VOLUMES];	/* FreeRTOS */
 
 
 	*sobj = CreateMutex(NULL, FALSE, NULL);		/* Win32 */
-	ret = (int)(*sobj != INVALID_HANDLE_VALUE);
+	ret = (*sobj != INVALID_HANDLE_VALUE);
 
-//	*sobj = SyncObjects[vol];		/* uITRON (give a static created semaphore) */
-//	ret = 1;
+//	*sobj = SyncObjects[vol];		/* uITRON (give a static created sync object) */
+//	ret = 1;						/* The initial value of the semaphore must be 1. */
 
 //	*sobj = OSMutexCreate(0, &err);	/* uC/OS-II */
-//	ret = (int)(err == OS_NO_ERR);
+//	ret = (err == OS_NO_ERR);
 
-//  *sobj = xSemaphoreCreateMutex();	/* FreeRTOS */
-//	ret = (int)(*sobj != NULL);
+//  if (!sem[vol])					/* FreeRTOS */
+//		sem[vol] = xSemaphoreCreateMutex();
+//	*sobj = sem[vol];
+//	ret = (*sobj != NULL);
 
 	return ret;
 }
@@ -46,9 +49,9 @@ int ff_cre_syncobj (	/* 1:Function succeeded, 0:Could not create due to any erro
 /*------------------------------------------------------------------------*/
 /* Delete a Synchronization Object                                        */
 /*------------------------------------------------------------------------*/
-/* This function is called in f_mount() function to delete a synchronization
-/  object that created with ff_cre_syncobj() function. When a 0 is
-/  returned, the f_mount() function fails with FR_INT_ERR.
+/* This function is called in f_mount function to delete a synchronization
+/  object that created with ff_cre_syncobj function. When a FALSE is
+/  returned, the f_mount function fails with FR_INT_ERR.
 */
 
 int ff_del_syncobj (	/* 1:Function succeeded, 0:Could not delete due to any error */
@@ -63,10 +66,9 @@ int ff_del_syncobj (	/* 1:Function succeeded, 0:Could not delete due to any erro
 //	ret = 1;					/* uITRON (nothing to do) */
 
 //	OSMutexDel(sobj, OS_DEL_ALWAYS, &err);	/* uC/OS-II */
-//	ret = (int)(err == OS_NO_ERR);
+//	ret = (err == OS_NO_ERR);
 
-//  xSemaphoreDelete(sobj);		/* FreeRTOS */
-//	ret = 1;
+//	ret = 1;					/* FreeRTOS (nothing to do) */
 
 	return ret;
 }
@@ -86,14 +88,14 @@ int ff_req_grant (	/* TRUE:Got a grant to access the volume, FALSE:Could not get
 {
 	int ret;
 
-	ret = (int)(WaitForSingleObject(sobj, _FS_TIMEOUT) == WAIT_OBJECT_0);	/* Win32 */
+	ret = (WaitForSingleObject(sobj, _FS_TIMEOUT) == WAIT_OBJECT_0);	/* Win32 */
 
-//	ret = (int)(wai_sem(sobj) == E_OK);			/* uITRON */
+//	ret = (wai_sem(sobj) == E_OK);				/* uITRON */
 
 //	OSMutexPend(sobj, _FS_TIMEOUT, &err));		/* uC/OS-II */
-//	ret = (int)(err == OS_NO_ERR);
+//	ret = (err == OS_NO_ERR);
 
-//	ret = (int)(xSemaphoreTake(sobj, _FS_TIMEOUT) == pdTRUE);	/* FreeRTOS */
+//	ret = (xSemaphoreTake(sobj, _FS_TIMEOUT) == pdTRUE);	/* FreeRTOS */
 
 	return ret;
 }

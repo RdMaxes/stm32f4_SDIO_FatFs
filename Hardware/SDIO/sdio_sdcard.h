@@ -107,7 +107,7 @@ typedef struct
   __IO uint8_t  RdBlockMisalign;      /*!< Read block misalignment */
   __IO uint8_t  DSRImpl;              /*!< DSR implemented */
   __IO uint8_t  Reserved2;            /*!< Reserved */
-  __IO uint32_t DeviceSize;           /*!< Device Size */
+  __IO uint64_t DeviceSize;           /*!< Device Size */
   __IO uint8_t  MaxRdCurrentVDDMin;   /*!< Max. read current @ VDD min */
   __IO uint8_t  MaxRdCurrentVDDMax;   /*!< Max. read current @ VDD max */
   __IO uint8_t  MaxWrCurrentVDDMin;   /*!< Max. write current @ VDD min */
@@ -386,6 +386,8 @@ void SD_LowLevel_DMA_TxConfig(uint32_t *BufferSRC, uint32_t BufferSize);
 void SD_LowLevel_DMA_RxConfig(uint32_t *BufferDST, uint32_t BufferSize);
 void SDIO_IRQHandler(void);
 void DMA2_Stream4_IRQHandler(void);
+u8 SD_WriteDisk(u8*buf,u32 sector,u8 cnt);
+u8 SD_ReadDisk(u8*buf,u32 sector,u8 cnt);
 
 #ifdef __cplusplus
 }

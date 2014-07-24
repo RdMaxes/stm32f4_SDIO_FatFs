@@ -10,21 +10,24 @@
 #include "diskio.h"		/* FatFs lower layer API */
 #include "sdio_sdcard.h"
 
+/* Definitions of physical drive number for each media */
+#define SDCARD 0
 
 /*-----------------------------------------------------------------------*/
 /* Inidialize a Drive                                                    */
 /*-----------------------------------------------------------------------*/
 
 DSTATUS disk_initialize (
-	BYTE pdrv				/* Physical drive nmuber (0..) */
+BYTE pdrv	/* Physical drive nmuber (0..) */
 )
 {
 	int result;
 
-	switch (pdrv) {
-	case SDCARD:
-				result = SD_Init();
-		return result;
+	switch (pdrv) 
+	{
+		case SDCARD:
+					result = SD_Init();
+					return result;
 	}
 	return STA_NOINIT;
 }
@@ -32,11 +35,11 @@ DSTATUS disk_initialize (
 
 
 /*-----------------------------------------------------------------------*/
-/* Get Disk Status                                                       */
+/* Get Disk Status */
 /*-----------------------------------------------------------------------*/
 
 DSTATUS disk_status (
-	BYTE pdrv		/* Physical drive nmuber (0..) */
+BYTE pdrv	/* Physical drive nmuber (0..) */
 )
 {
 	pdrv--;
@@ -46,72 +49,103 @@ DSTATUS disk_status (
 
 
 /*-----------------------------------------------------------------------*/
-/* Read Sector(s)                                                        */
+/* Read Sector(s) */
 /*-----------------------------------------------------------------------*/
 
 DRESULT disk_read (
-	BYTE pdrv,		/* Physical drive nmuber (0..) */
-	BYTE *buff,		/* Data buffer to store read data */
-	DWORD sector,	/* Sector address (LBA) */
-	UINT count		/* Number of sectors to read (1..128) */
+BYTE pdrv,	/* Physical drive nmuber (0..) */
+BYTE *buff,	/* Data buffer to store read data */
+DWORD sector,	/* Sector address (LBA) */
+BYTE count	/* Number of sectors to read (1..128) */
 )
 {
-	switch (pdrv) {
-	case SDCARD:
-				if(count==1)//single read
-				{
-					SD_ReadBlock((uint8_t *)(sector<<9),(u32)(&buff[0]),512);
-				}
-				else//Multi-read
-				{
-					SD_ReadMultiBlocks((uint8_t *)(sector<<9),(u32)(&buff[0]),512,count);
-				}
+	DRESULT res;
+	u8 retry=0X1F;	
+	switch (pdrv) 
+	{
+		case SDCARD:
+					while(retry)
+					{
+						res=SD_ReadDisk(buff,sector,count);
+						if(res==0)break;						
+						retry--;
+					}
+					break;					
 	}
-	return RES_OK;
+    if(res==0x00)return RES_OK;	 
+    else return RES_ERROR;	
 }
 
 
 
 /*-----------------------------------------------------------------------*/
-/* Write Sector(s)                                                       */
+/* Write Sector(s) */
 /*-----------------------------------------------------------------------*/
 
 #if _USE_WRITE
 DRESULT disk_write (
-	BYTE pdrv,			/* Physical drive nmuber (0..) */
-	const BYTE *buff,	/* Data to be written */
-	DWORD sector,		/* Sector address (LBA) */
-	UINT count			/* Number of sectors to write (1..128) */
+BYTE pdrv,	/* Physical drive nmuber (0..) */
+const BYTE *buff,	/* Data to be written */
+DWORD sector,	/* Sector address (LBA) */
+BYTE count	/* Number of sectors to write (1..128) */
 )
 {
-	switch (pdrv) {
-	case SDCARD:
-				if(count==1)//single write
-				{
-					SD_WriteBlock((uint8_t *)(sector<<9),(u32)(&buff[0]),512);
-				}
-				else//Multi-write
-				{
-					SD_WriteMultiBlocks((uint8_t *)(sector<<9),(u32)(&buff[0]),512,count);
-				}
+	u8 res=0;  
+	u8 retry=0X1F;
+
+	switch (pdrv) 
+	{
+		case SDCARD:
+			while(retry)
+			{
+				res=SD_WriteDisk((u8*)buff,sector,count);
+				if(res==0)break;
+				retry--;
+			}
+			break;
 	}
-	return RES_OK;
+    if(res == 0x00)return RES_OK;	 
+    else return RES_ERROR;
 }
 #endif
 
 
 /*-----------------------------------------------------------------------*/
-/* Miscellaneous Functions                                               */
+/* Miscellaneous Functions */
 /*-----------------------------------------------------------------------*/
 
 #if _USE_IOCTL
 DRESULT disk_ioctl (
-	BYTE pdrv,		/* Physical drive nmuber (0..) */
-	BYTE cmd,		/* Control code */
-	void *buff		/* Buffer to send/receive control data */
+BYTE pdrv,	/* Physical drive nmuber (0..) */
+BYTE cmd,	/* Control code */
+void *buff	/* Buffer to send/receive control data */
 )
 {
-	return RES_OK;
+	DRESULT res = 0;						  			     
+	if(pdrv==SDCARD)
+	{
+	    switch(cmd)
+	    {
+		    case CTRL_SYNC:	    
+ 		        res = RES_OK;
+		        break;	 
+		    case GET_SECTOR_SIZE:
+		        *(WORD*)buff = 512;
+		        res = RES_OK;
+		        break;	 
+		    case GET_BLOCK_SIZE:
+		        *(WORD*)buff = 8;
+		        res = RES_OK;
+		        break;	 
+		    case GET_SECTOR_COUNT:
+ 		        res = RES_OK;
+		        break;
+		    default:
+		        res = RES_PARERR;
+		        break;
+	    }
+	}
+	return res;
 }
 #endif
 

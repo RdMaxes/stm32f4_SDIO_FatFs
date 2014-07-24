@@ -203,11 +203,14 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "sdio_sdcard.h"
+#include "string.h"
 
 /**
   * @brief  SDIO Static flags, TimeOut, FIFO Address
   */
-#define NULL 0
+#ifndef NULL
+  #define NULL 0
+#endif
 #define SDIO_STATIC_FLAGS               ((uint32_t)0x000005FF)
 #define SDIO_CMD0TIMEOUT                ((uint32_t)0x00010000)
 
@@ -289,7 +292,7 @@ SDIO_InitTypeDef SDIO_InitStructure;
 SDIO_CmdInitTypeDef SDIO_CmdInitStructure;
 SDIO_DataInitTypeDef SDIO_DataInitStructure;
 
-
+u8 SDIO_DATA_BUFFER[512];
 /** @defgroup STM32F4_DISCOVERY_SDIO_SD_Private_Function_Prototypes
   * @{
   */
@@ -3068,4 +3071,49 @@ void SD_LowLevel_DMA_RxConfig(uint32_t *BufferDST, uint32_t BufferSize)
 
   /* DMA2 Stream3 or Stream6 enable */
   DMA_Cmd(SD_SDIO_DMA_STREAM, ENABLE);
+}
+
+
+                 
+u8 SD_ReadDisk(u8*buf,u32 sector,u8 cnt)
+{
+  u8 sta=SD_OK;
+  u8 n;
+  if(CardType!=SDIO_STD_CAPACITY_SD_CARD_V1_1)sector<<=9;
+  if((u32)buf%4!=0)
+  {
+    for(n=0;n<cnt;n++)
+    {
+      sta=SD_ReadBlock(SDIO_DATA_BUFFER,sector,512);      //µ¥¸ösectorµÄ¶Á²Ù×÷
+      memcpy(buf,SDIO_DATA_BUFFER,512);
+      buf+=512;
+    } 
+  }else
+  {
+    if(cnt==1)sta=SD_ReadBlock(buf,sector,512);     //µ¥¸ösectorµÄ¶Á²Ù×÷
+    else sta=SD_ReadMultiBlocks(buf,sector,512,cnt);//¶à¸ösector  
+  }
+  return sta;
+}
+
+ 
+u8 SD_WriteDisk(u8*buf,u32 sector,u8 cnt)
+{
+  u8 sta=SD_OK;
+  u8 n;
+  if(CardType!=SDIO_STD_CAPACITY_SD_CARD_V1_1)sector<<=9;
+  if((u32)buf%4!=0)
+  {
+    for(n=0;n<cnt;n++)
+    {
+      memcpy(SDIO_DATA_BUFFER,buf,512);
+      sta=SD_WriteBlock(SDIO_DATA_BUFFER,sector,512);     //µ¥¸ösectorµÄÐ´²Ù×÷
+      buf+=512;
+    } 
+  }else
+  {
+    if(cnt==1)sta=SD_WriteBlock(buf,sector,512);      //µ¥¸ösectorµÄÐ´²Ù×÷
+    else sta=SD_WriteMultiBlocks(buf,sector,512,cnt); //¶à¸ösector  
+  }
+  return sta;
 }

@@ -18,11 +18,22 @@ UINT br, bw;		//file R/W counter
 DIR dir;			//directory 
 FILINFO FileInfo;	//file information 
 
-const char rootdir[] = "/test"; //root directory of driver 0
-const char opnfile[] = "test.text"; //file name 
-const char driver0[] = "/\0";
+static const char rootdir[] = "0:/"; //root directory of driver 0
+static const char opnfile[] = "test.txt"; //file name 
 uint8_t rd_buf[READ_BUF_LEN] = {0};	//read out buffer
 
+//print string via usart2
+void print_string(uint8_t *buf)
+{
+	uint32_t i=0;
+	uint8_t* pbuf = buf;
+	while(*buf!='\0')
+	{
+		i++;
+		buf++;
+	}
+	Usart2_DMA_Send(pbuf,i);
+}
 //Delay for a while
 //time: delay time
 static void delay(int32_t time)
@@ -42,12 +53,13 @@ int main(void)
 			LED_loop();
 		}
 	//print SD card size
+	stream_cnt = 	SDCardInfo.CardCapacity;
 	my_printf("\r\nSD Card Size: %d Bytes\r\n",(uint32_t)SDCardInfo.CardCapacity);
 	//mount logical disk 0
-		res = f_mount(&fs,driver0,1);
+		res = f_mount(0,&fs);
 		if (res==FR_OK)
 		{
-			res = f_opendir(&dir,rootdir); //open assigned directory
+			res = f_opendir(&dir,"0:/test"); //open assigned directory
 			if(res==FR_OK)
 			{
 				res = f_open(&fsrc,opnfile,FA_READ); //open assigned file
@@ -63,7 +75,7 @@ int main(void)
 						//read out data with READ_BUF_LEN length
 						res = f_read(&fsrc,rd_buf,READ_BUF_LEN,&br); 
 						//print out
-						my_printf("%s",rd_buf);
+						print_string((uint8_t*)rd_buf);
 						//if error occur or reach end of file, break
 						if(res||(br<READ_BUF_LEN))	break;
 					}
@@ -74,7 +86,7 @@ int main(void)
 		}
 		else	my_printf("Fatal, driver mounting error.\r\n");
 
-		f_mount(0x00,driver0,1);	
+		f_mount(0,0x00);	
 	//unmount logical disk 0
 	while(1) 
 	{

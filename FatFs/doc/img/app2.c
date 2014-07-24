@@ -14,7 +14,7 @@ FRESULT empty_directory (
     FILINFO fno;
 
 #if _USE_LFN
-    fno.lfname = 0; /* Disable LFN output */
+    fno.lfname = 0; /* Set null pointer because LFN is not needed */
 #endif
     fr = f_opendir(&dir, path);
     if (fr == FR_OK) {
@@ -23,7 +23,7 @@ FRESULT empty_directory (
         for (;;) {
             fr = f_readdir(&dir, &fno);
             if (fr != FR_OK || !fno.fname[0]) break;
-            if (_FS_RPATH && fno.fname[0] == '.') continue;
+            if (fno.fname[0] == '.') continue;
             j = 0;
             do
                 path[i+j] = fno.fname[j];
@@ -36,7 +36,6 @@ FRESULT empty_directory (
             if (fr != FR_OK) break;
         }
         path[--i] = '\0';
-        closedir(&dir);
     }
 
     return fr;
@@ -47,19 +46,17 @@ FRESULT empty_directory (
 int main (void)
 {
     FRESULT fr;
-    FATFS fs;
     char buff[64];    /* Working buffer */
 
 
-
-    f_mount(&fs, "", 0);
+    f_mount(0, &Fatfs);
 
     strcpy(buff, "/");  /* Directory to be emptied */
     fr = empty_directory(buff);
 
     if (fr) {
         printf("Function failed. (%u)\n", fr);
-        return fr;
+        return 1;
     } else {
         printf("All contents in the %s are successfully removed.\n", buff);
         return 0;

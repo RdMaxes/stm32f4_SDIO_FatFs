@@ -24,11 +24,12 @@ FRESULT open_append (
 int main (void)
 {
     FRESULT fr;
-    FATFS fs;
     FIL fil;
 
+
+    f_mount(0, &Fatfs);
+
     /* Open or create a log file and ready to append */
-    f_mount(&fs, "", 0);
     fr = open_append(&fil, "logfile.txt");
     if (fr != FR_OK) return 1;
 
