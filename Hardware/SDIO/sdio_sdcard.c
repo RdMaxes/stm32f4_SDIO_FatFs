@@ -484,6 +484,7 @@ SD_Error SD_PowerON(void)
   __IO SD_Error errorstatus = SD_OK;
   uint32_t response = 0, count = 0, validvoltage = 0;
   uint32_t SDType = SD_STD_CAPACITY;
+  uint8_t i= 0;
 
   /*!< Power ON Sequence -----------------------------------------------------*/
   /*!< Configure the SDIO peripheral */
@@ -503,18 +504,20 @@ SD_Error SD_PowerON(void)
 
   /*!< Enable SDIO Clock */
   SDIO_ClockCmd(ENABLE);
+  for(i=0;i<74;i++)
+  {
+    /*!< CMD0: GO_IDLE_STATE ---------------------------------------------------*/
+    /*!< No CMD response required */
+    SDIO_CmdInitStructure.SDIO_Argument = 0x0;
+    SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_GO_IDLE_STATE;
+    SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_No;
+    SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+    SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+    SDIO_SendCommand(&SDIO_CmdInitStructure);
 
-  /*!< CMD0: GO_IDLE_STATE ---------------------------------------------------*/
-  /*!< No CMD response required */
-  SDIO_CmdInitStructure.SDIO_Argument = 0x0;
-  SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_GO_IDLE_STATE;
-  SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_No;
-  SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
-  SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
-  SDIO_SendCommand(&SDIO_CmdInitStructure);
-
-  errorstatus = CmdError();
-
+    errorstatus = CmdError();
+    if(errorstatus==SD_OK)break;
+  }
   if (errorstatus != SD_OK)
   {
     /*!< CMD Response TimeOut (wait for CMDSENT flag) */
