@@ -52,14 +52,12 @@ int main(void)
 		{
 			LED_loop();
 		}
-	//print SD card size
-	stream_cnt = 	SDCardInfo.CardCapacity;
 	my_printf("\r\nSD Card Size: %d Bytes\r\n",(uint32_t)SDCardInfo.CardCapacity);
 	//mount logical disk 0
 		res = f_mount(0,&fs);
 		if (res==FR_OK)
 		{
-			res = f_opendir(&dir,"0:/test"); //open assigned directory
+			res = f_opendir(&dir,"0:/"); //open assigned directory
 			if(res==FR_OK)
 			{
 				res = f_open(&fsrc,opnfile,FA_READ); //open assigned file
